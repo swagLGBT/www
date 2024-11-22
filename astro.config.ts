@@ -93,6 +93,7 @@ function pixelArtIcons({
 
     await new Promise<void>((resolve) => extractor.end(resolve));
     await doneWriting;
+    logger.info("Extracted icons from archive.");
 
     return;
   };
