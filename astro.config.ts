@@ -1,14 +1,13 @@
 import process from "node:process";
 import path from "node:path";
 import fs from "node:fs";
-import os from "node:os";
+import fsp from "node:fs/promises";
 
 import { defineConfig } from "astro/config";
 import { type AstroIntegrationLogger, type AstroIntegration } from "astro";
 import icon from "astro-icon";
-import { execa } from "execa";
-
-const tar = os.platform() === "darwin" ? "gtar" : "tar";
+import * as tar from "tar";
+import { default as initAge } from "age-encryption";
 
 const iconDir = path.resolve("icons");
 const iconArchive = path.resolve("icons.tar.gz.enc");
@@ -72,26 +71,30 @@ function pixelArtIcons({
       return;
     }
 
-    const { stderr, pipedFrom, stdout, exitCode } = await execa({
-      input: decryptionKey,
-    })`age --decrypt --identity - ${archivePath}`.pipe`${tar} -xzvf -`;
+    const archiveContents = await fsp.readFile(archivePath);
 
-    if (stderr.length > 0) {
-      logger.warn(`stderr: ${stderr}`);
-    }
+    const age = await initAge();
+    const decryptor = new age.Decrypter();
+    decryptor.addIdentity(decryptionKey);
 
-    const decryptionStderr = pipedFrom[0]?.stderr;
-    if (decryptionStderr !== undefined && decryptionStderr.length > 0) {
-      logger.warn(`stderr: ${decryptionStderr}`);
-    }
+    const decryptedArchive = decryptor.decrypt(archiveContents, "uint8array");
 
-    if (exitCode !== 0) {
-      logger.error(
-        `Nonzero exit code from subprocess: ${exitCode}. Check stderr.`
-      );
-    }
+    const extractor = tar.extract();
+    extractor.on("warn", (err) => logger.warn(`${err}`));
+    const doneWriting = new Promise<void>((resolve) =>
+      extractor.on("close", resolve)
+    );
 
-    logger.debug(stdout);
+    await new Promise<void>((resolve, reject) =>
+      extractor.write(decryptedArchive, (err) =>
+        err instanceof Error ? reject(err) : resolve()
+      )
+    );
+
+    await new Promise<void>((resolve) => extractor.end(resolve));
+    await doneWriting;
+
+    return;
   };
 
   return {
