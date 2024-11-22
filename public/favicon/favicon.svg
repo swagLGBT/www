@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.dev/svgjs" width="180" height="180"><svg width="180" height="180" xmlns="http://www.w3.org/2000/svg" fill="none">
+
+ <g>
+  <title>Layer 1</title>
+  <g id="SvgjsG1084">
+   <path id="SvgjsPath1083" d="m0,40l0,40l10,0l0,-10l20,0l0,10l10,0l0,20l-10,0l0,10l-20,0l0,-10l-10,0l0,40l10,0l0,-10l10,0l0,-10l10,0l0,-10l10,0l0,-10l10,0l0,-20l-10,0l0,-10l-10,0l0,-10l-10,0l0,-10l0,-10l-20,0z" fill="#fdd817"></path>
+   <rect id="SvgjsRect1082" height="20" width="20" y="80" x="10" fill="#fdd817"></rect>
+   <path id="SvgjsPath1081" d="m10,70l20,0l0,10l-20,0l0,-10z" fill="#66338b"></path>
+   <path id="SvgjsPath1080" d="m30,80l10,0l0,20l-10,0l0,-20z" fill="#66338b"></path>
+   <path id="SvgjsPath1079" d="m10,100l20,0l0,10l-20,0l0,-10z" fill="#66338b"></path>
+   <path id="SvgjsPath1078" d="m0,80l10,0l0,20l-10,0l0,-20z" fill="#66338b"></path>
+   <path id="SvgjsPath1077" d="m0,30l10,0l0,10l10,0l0,10l10,0l0,10l10,0l0,10l10,0l0,10l10,0l0,20l-10,0l0,10l-10,0l0,10l-10,0l0,10l-10,0l0,10l-10,0l0,10l-10,0l0,-10l10,0l0,-10l10,0l0,-10l10,0l0,-10l10,0l0,-10l10,0l0,-20l-10,0l0,-10l-10,0l0,-10l-10,0l0,-10l-10,0l0,-10l-10,0l0,-10z" fill="#fff"></path>
+   <path id="SvgjsPath1076" d="m10,30l10,0l0,10l10,0l0,10l10,0l0,10l10,0l0,10l10,0l0,10l10,0l0,20l-10,0l0,10l-10,0l0,10l-10,0l0,10l-10,0l0,10l-10,0l0,10l-10,0l0,-10l10,0l0,-10l10,0l0,-10l10,0l0,-10l10,0l0,-10l10,0l0,-20l-10,0l0,-10l-10,0l0,-10l-10,0l0,-10l-10,0l0,-10l-10,0l0,-10z" fill="#f4aec8"></path>
+   <path id="SvgjsPath1075" d="m20,30l10,0l0,10l10,0l0,10l10,0l0,10l10,0l0,10l10,0l0,10l10,0l0,20l-10,0l0,10l-10,0l0,10l-10,0l0,10l-10,0l0,10l-10,0l0,10l-10,0l0,-10l10,0l0,-10l10,0l0,-10l10,0l0,-10l10,0l0,-10l10,0l0,-20l-10,0l0,-10l-10,0l0,-10l-10,0l0,-10l-10,0l0,-10l-10,0l0,-10z" fill="#7bcce5"></path>
+   <path id="SvgjsPath1074" d="m30,30l10,0l0,10l10,0l0,10l10,0l0,10l10,0l0,10l10,0l0,10l10,0l0,20l-10,0l0,10l-10,0l0,10l-10,0l0,10l-10,0l0,10l-10,0l0,10l-10,0l0,-10l10,0l0,-10l10,0l0,-10l10,0l0,-10l10,0l0,-10l10,0l0,-20l-10,0l0,-10l-10,0l0,-10l-10,0l0,-10l-10,0l0,-10l-10,0l0,-10z" fill="#945516"></path>
+   <path id="SvgjsPath1073" d="m40,30l10,0l0,10l10,0l0,10l10,0l0,10l10,0l0,10l10,0l0,10l10,0l0,20l-10,0l0,10l-10,0l0,10l-10,0l0,10l-10,0l0,10l-10,0l0,10l-10,0l0,-10l10,0l0,-10l10,0l0,-10l10,0l0,-10l10,0l0,-10l10,0l0,-20l-10,0l0,-10l-10,0l0,-10l-10,0l0,-10l-10,0l0,-10l-10,0l0,-10z" fill="#000"></path>
+   <path id="SvgjsPath1072" d="m50,30l0,10l10,0l0,10l120,0l0,-20l-130,0z" fill="#e22016"></path>
+   <path id="SvgjsPath1071" d="m70,50l0,10l10,0l0,10l100,0l0,-20l-110,0z" fill="#f28917"></path>
+   <path id="SvgjsPath1070" d="m90,70l0,10l10,0l0,10l80,0l0,-20l-90,0z" fill="#efe524"></path>
+   <path id="SvgjsPath1069" d="m100,90l0,10l-10,0l0,10l90,0l0,-20l-80,0z" fill="#78b82a"></path>
+   <path id="SvgjsPath1068" d="m80,110l0,10l-10,0l0,10l110,0l0,-20l-100,0z" fill="#2c58a4"></path>
+   <path id="SvgjsPath1067" d="m60,130l0,10l-10,0l0,10l130,0l0,-20l-120,0z" fill="#6d2380"></path>
+  </g>
+ </g>
+</svg><style>@media (prefers-color-scheme: light) { :root { filter: none; } }
+@media (prefers-color-scheme: dark) { :root { filter: none; } }
+</style></svg>

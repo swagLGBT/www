@@ -1,0 +1,474 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+/** Props */
+interface Props extends HTMLAttributes<"div"> {
+  /** The flag to display */
+  flag?: "transgender" | "progressPride" | "lesbian";
+
+  /**
+   * Whether or not to wave the flag.
+   *
+   * Will be overriden to not wave if `prefers-reduced-motion` is set.
+   */
+  animated?: boolean;
+
+  /** How large the flag should be.
+   *
+   * Avoid non-integer values, as they will create visual artifacts.
+   */
+  scale?: number;
+}
+
+const {
+  flag = "progressPride",
+  animated = false,
+  scale = 5,
+  class: className,
+  "class:list": classList,
+  ...props
+} = Astro.props;
+
+/** Colors for various pride flags. */
+
+// misc.
+const white = "#ffffff";
+const black = "#000000";
+
+// Lesbian
+const lesbianStripe1 = "#d62900";
+const lesbianStripe2 = "#f07722";
+const lesbianStripe3 = "#ff9b55";
+const lesbianStripe5 = "#d262a6";
+const lesbianStripe6 = "#b75591";
+const lesbianStripe7 = "#a50062";
+
+// Transgender
+const transBlue = "#5bcefa";
+const transPink = "#f5a9b8";
+
+// Progress Pride
+const intersexYellow = "#fdd817";
+const intersexPurple = "#66338b";
+const pocBrown = "#945516";
+const rainbowRed = "#e22016";
+const rainbowPurple = "#6d2380";
+const rainbowOrange = "#f28917";
+const rainbowBlue = "#2c58a4";
+const rainbowYellow = "#efe524";
+const rainbowGreen = "#78b82a";
+
+/** Flag animation settings. */
+const animationDuration = "500ms";
+const animationDelay = "100ms";
+const animationHeight = "3%";
+
+/** Shorthand measurements for stripe heights. */
+
+// Halves
+const oneHalf = "50%";
+
+// Thirds
+const oneThird = `${(100 * 1) / 3}%`;
+const twoThirds = `${(100 * 2) / 3}%`;
+
+// Quarters
+const oneFourth = "25%";
+const threeFourths = "75%";
+
+// Fifths
+const oneFifth = "20%";
+const twoFifths = "40%";
+const threeFifths = "60%";
+const fourFifths = "80%";
+
+// Sixths
+const oneSixth = `${(100 * 1) / 6}%`;
+const fiveSixths = `${(100 * 5) / 6}%`;
+
+// Sevenths
+const oneSeventh = `${(100 * 1) / 7}%`;
+const twoSevenths = `${(100 * 2) / 7}%`;
+const threeSevenths = `${(100 * 3) / 7}%`;
+const fourSevenths = `${(100 * 4) / 7}%`;
+const fiveSevenths = `${(100 * 5) / 7}%`;
+const sixSevenths = `${(100 * 6) / 7}%`;
+
+// Twelfths
+const oneTwelfth = `${(100 * 1) / 12}%`;
+const fiveTwelfths = `${(100 * 5) / 12}%`;
+const sevenTwelfths = `${(100 * 7) / 12}%`;
+const elevenTwelfths = `${(100 * 11) / 12}%`;
+---
+
+<style
+  define:vars={{
+    // Colors
+    white,
+    black,
+    lesbianStripe1,
+    lesbianStripe2,
+    lesbianStripe3,
+    lesbianStripe5,
+    lesbianStripe6,
+    lesbianStripe7,
+    transBlue,
+    transPink,
+    intersexYellow,
+    intersexPurple,
+    pocBrown,
+    rainbowRed,
+    rainbowPurple,
+    rainbowOrange,
+    rainbowBlue,
+    rainbowYellow,
+    rainbowGreen,
+
+    // Animation
+    animationDuration,
+    animationDelay,
+    animationHeight,
+
+    // Measurements
+    oneHalf,
+    oneThird,
+    twoThirds,
+    oneFourth,
+    threeFourths,
+    oneFifth,
+    twoFifths,
+    threeFifths,
+    fourFifths,
+    oneSixth,
+    fiveSixths,
+    oneSeventh,
+    twoSevenths,
+    threeSevenths,
+    fourSevenths,
+    fiveSevenths,
+    sixSevenths,
+    oneTwelfth,
+    fiveTwelfths,
+    sevenTwelfths,
+    elevenTwelfths,
+
+    // Sizing
+    scale,
+  }}
+>
+  /* Basic layout */
+  .flag {
+    display: flex;
+    aspect-ratio: 3 / 2;
+    width: calc(var(--scale) * 18px);
+  }
+
+  .flag > .column {
+    flex: 1;
+  }
+
+  /* Animation */
+  @media (prefers-reduced-motion: no-preference) {
+    @keyframes oscillate {
+      from {
+        transform: translateY(var(--animationHeight));
+      }
+
+      to {
+        transform: translateY(calc(-1 * var(--animationHeight)));
+      }
+    }
+
+    .flag.animated > .column {
+      animation: oscillate var(--animationDuration) infinite;
+      animation-direction: alternate;
+      animation-timing-function: ease-in-out;
+      animation-fill-mode: backwards;
+    }
+
+    .flag.animated > .column:nth-of-type(1) {
+      animation-delay: calc(-17 * var(--animationDelay));
+    }
+
+    .flag.animated > .column:nth-of-type(2) {
+      animation-delay: calc(-16 * var(--animationDelay));
+    }
+
+    .flag.animated > .column:nth-of-type(3) {
+      animation-delay: calc(-15 * var(--animationDelay));
+    }
+
+    .flag.animated > .column:nth-of-type(4) {
+      animation-delay: calc(-14 * var(--animationDelay));
+    }
+
+    .flag.animated > .column:nth-of-type(5) {
+      animation-delay: calc(-13 * var(--animationDelay));
+    }
+
+    .flag.animated > .column:nth-of-type(6) {
+      animation-delay: calc(-12 * var(--animationDelay));
+    }
+
+    .flag.animated > .column:nth-of-type(7) {
+      animation-delay: calc(-11 * var(--animationDelay));
+    }
+
+    .flag.animated > .column:nth-of-type(8) {
+      animation-delay: calc(-10 * var(--animationDelay));
+    }
+
+    .flag.animated > .column:nth-of-type(9) {
+      animation-delay: calc(-9 * var(--animationDelay));
+    }
+
+    .flag.animated > .column:nth-of-type(10) {
+      animation-delay: calc(-8 * var(--animationDelay));
+    }
+
+    .flag.animated > .column:nth-of-type(11) {
+      animation-delay: calc(-7 * var(--animationDelay));
+    }
+
+    .flag.animated > .column:nth-of-type(12) {
+      animation-delay: calc(-6 * var(--animationDelay));
+    }
+
+    .flag.animated > .column:nth-of-type(13) {
+      animation-delay: calc(-5 * var(--animationDelay));
+    }
+
+    .flag.animated > .column:nth-of-type(14) {
+      animation-delay: calc(-4 * var(--animationDelay));
+    }
+
+    .flag.animated > .column:nth-of-type(15) {
+      animation-delay: calc(-3 * var(--animationDelay));
+    }
+
+    .flag.animated > .column:nth-of-type(16) {
+      animation-delay: calc(-2 * var(--animationDelay));
+    }
+
+    .flag.animated > .column:nth-of-type(17) {
+      animation-delay: calc(-1 * var(--animationDelay));
+    }
+
+    .flag.animated > .column:nth-of-type(18) {
+      animation-delay: 0;
+    }
+  }
+
+  /* Lesbian Flag */
+  .flag.lesbian > .column {
+    background: linear-gradient(
+      to bottom,
+      var(--lesbianStripe1) 0% var(--oneSeventh),
+      var(--lesbianStripe2) var(--oneSeventh) var(--twoSevenths),
+      var(--lesbianStripe3) var(--twoSevenths) var(--threeSevenths),
+      var(--white) var(--threeSevenths) var(--fourSevenths),
+      var(--lesbianStripe5) var(--fourSevenths) var(--fiveSevenths),
+      var(--lesbianStripe6) var(--fiveSevenths) var(--sixSevenths),
+      var(--lesbianStripe7) var(--sixSevenths) 100%
+    );
+  }
+
+  /* Transgender flag */
+  .flag.transgender > .column {
+    background: linear-gradient(
+      to bottom,
+      var(--transBlue) 0% var(--oneFifth),
+      var(--transPink) var(--oneFifth) var(--twoFifths),
+      var(--white) var(--twoFifths) var(--threeFifths),
+      var(--transPink) var(--threeFifths) var(--fourFifths),
+      var(--transBlue) var(--fourFifths) 100%
+    );
+  }
+
+  /* Progress Pride flag */
+  .flag.progressPride > .column:nth-of-type(1) {
+    background: linear-gradient(
+      to bottom,
+      var(--white) 0% var(--oneTwelfth),
+      var(--intersexYellow) var(--oneTwelfth) var(--fiveTwelfths),
+      var(--intersexPurple) var(--fiveTwelfths) var(--sevenTwelfths),
+      var(--intersexYellow) var(--sevenTwelfths) var(--elevenTwelfths),
+      var(--white) var(--elevenTwelfths) 100%
+    );
+  }
+
+  .flag.progressPride > .column:nth-of-type(2) {
+    background: linear-gradient(
+      to bottom,
+      var(--transPink) 0% var(--oneTwelfth),
+      var(--white) var(--oneTwelfth) var(--oneSixth),
+      var(--intersexYellow) var(--oneSixth) var(--oneThird),
+      var(--intersexPurple) var(--oneThird) var(--fiveTwelfths),
+      var(--intersexYellow) var(--fiveTwelfths) var(--sevenTwelfths),
+      var(--intersexPurple) var(--sevenTwelfths) var(--twoThirds),
+      var(--intersexYellow) var(--twoThirds) var(--fiveSixths),
+      var(--white) var(--fiveSixths) var(--elevenTwelfths),
+      var(--transPink) var(--elevenTwelfths) 100%
+    );
+  }
+
+  .flag.progressPride > .column:nth-of-type(3) {
+    background: linear-gradient(
+      to bottom,
+      var(--transBlue) 0% var(--oneTwelfth),
+      var(--transPink) var(--oneTwelfth) var(--oneSixth),
+      var(--white) var(--oneSixth) var(--oneFourth),
+      var(--intersexYellow) var(--oneFourth) var(--oneThird),
+      var(--intersexPurple) var(--oneThird) var(--fiveTwelfths),
+      var(--intersexYellow) var(--fiveTwelfths) var(--sevenTwelfths),
+      var(--intersexPurple) var(--sevenTwelfths) var(--twoThirds),
+      var(--intersexYellow) var(--twoThirds) var(--threeFourths),
+      var(--white) var(--threeFourths) var(--fiveSixths),
+      var(--transPink) var(--fiveSixths) var(--elevenTwelfths),
+      var(--transBlue) var(--elevenTwelfths) 100%
+    );
+  }
+
+  .flag.progressPride > .column:nth-of-type(4) {
+    background: linear-gradient(
+      to bottom,
+      var(--pocBrown) 0% var(--oneTwelfth),
+      var(--transBlue) var(--oneTwelfth) var(--oneSixth),
+      var(--transPink) var(--oneSixth) var(--oneFourth),
+      var(--white) var(--oneFourth) var(--oneThird),
+      var(--intersexYellow) var(--oneThird) var(--fiveTwelfths),
+      var(--intersexPurple) var(--fiveTwelfths) var(--sevenTwelfths),
+      var(--intersexYellow) var(--sevenTwelfths) var(--twoThirds),
+      var(--white) var(--twoThirds) var(--threeFourths),
+      var(--transPink) var(--threeFourths) var(--fiveSixths),
+      var(--transBlue) var(--fiveSixths) var(--elevenTwelfths),
+      var(--pocBrown) var(--elevenTwelfths) 100%
+    );
+  }
+
+  .flag.progressPride > .column:nth-of-type(5) {
+    background: linear-gradient(
+      to bottom,
+      var(--black) 0% var(--oneTwelfth),
+      var(--pocBrown) var(--oneTwelfth) var(--oneSixth),
+      var(--transBlue) var(--oneSixth) var(--oneFourth),
+      var(--transPink) var(--oneFourth) var(--oneThird),
+      var(--white) var(--oneThird) var(--fiveTwelfths),
+      var(--intersexYellow) var(--fiveTwelfths) var(--sevenTwelfths),
+      var(--white) var(--sevenTwelfths) var(--twoThirds),
+      var(--transPink) var(--twoThirds) var(--threeFourths),
+      var(--transBlue) var(--threeFourths) var(--fiveSixths),
+      var(--pocBrown) var(--fiveSixths) var(--elevenTwelfths),
+      var(--black) var(--elevenTwelfths) 100%
+    );
+  }
+
+  .flag.progressPride > .column:nth-of-type(6) {
+    background: linear-gradient(
+      to bottom,
+      var(--rainbowRed) 0% var(--oneTwelfth),
+      var(--black) var(--oneTwelfth) var(--oneSixth),
+      var(--pocBrown) var(--oneSixth) var(--oneFourth),
+      var(--transBlue) var(--oneFourth) var(--oneThird),
+      var(--transPink) var(--oneThird) var(--fiveTwelfths),
+      var(--white) var(--fiveTwelfths) var(--sevenTwelfths),
+      var(--transPink) var(--sevenTwelfths) var(--twoThirds),
+      var(--transBlue) var(--twoThirds) var(--threeFourths),
+      var(--pocBrown) var(--threeFourths) var(--fiveSixths),
+      var(--black) var(--fiveSixths) var(--elevenTwelfths),
+      var(--rainbowPurple) var(--elevenTwelfths) 100%
+    );
+  }
+
+  .flag.progressPride > .column:nth-of-type(7) {
+    background: linear-gradient(
+      to bottom,
+      var(--rainbowRed) 0% var(--oneSixth),
+      var(--black) var(--oneSixth) var(--oneFourth),
+      var(--pocBrown) var(--oneFourth) var(--oneThird),
+      var(--transBlue) var(--oneThird) var(--fiveTwelfths),
+      var(--transPink) var(--fiveTwelfths) var(--sevenTwelfths),
+      var(--transBlue) var(--sevenTwelfths) var(--twoThirds),
+      var(--pocBrown) var(--twoThirds) var(--threeFourths),
+      var(--black) var(--threeFourths) var(--fiveSixths),
+      var(--rainbowPurple) var(--fiveSixths) 100%
+    );
+  }
+
+  .flag.progressPride > .column:nth-of-type(8) {
+    background: linear-gradient(
+      to bottom,
+      var(--rainbowRed) 0% var(--oneSixth),
+      var(--rainbowOrange) var(--oneSixth) var(--oneFourth),
+      var(--black) var(--oneFourth) var(--oneThird),
+      var(--pocBrown) var(--oneThird) var(--fiveTwelfths),
+      var(--transBlue) var(--fiveTwelfths) var(--sevenTwelfths),
+      var(--pocBrown) var(--sevenTwelfths) var(--twoThirds),
+      var(--black) var(--twoThirds) var(--threeFourths),
+      var(--rainbowBlue) var(--threeFourths) var(--fiveSixths),
+      var(--rainbowPurple) var(--fiveSixths) 100%
+    );
+  }
+
+  .flag.progressPride > .column:nth-of-type(9) {
+    background: linear-gradient(
+      to bottom,
+      var(--rainbowRed) 0% var(--oneSixth),
+      var(--rainbowOrange) var(--oneSixth) var(--oneThird),
+      var(--black) var(--oneThird) var(--fiveTwelfths),
+      var(--pocBrown) var(--fiveTwelfths) var(--sevenTwelfths),
+      var(--black) var(--sevenTwelfths) var(--twoThirds),
+      var(--rainbowBlue) var(--twoThirds) var(--fiveSixths),
+      var(--rainbowPurple) var(--fiveSixths) 100%
+    );
+  }
+
+  .flag.progressPride > .column:nth-of-type(10) {
+    background: linear-gradient(
+      to bottom,
+      var(--rainbowRed) 0% var(--oneSixth),
+      var(--rainbowOrange) var(--oneSixth) var(--oneThird),
+      var(--rainbowYellow) var(--oneThird) var(--fiveTwelfths),
+      var(--black) var(--fiveTwelfths) var(--sevenTwelfths),
+      var(--rainbowGreen) var(--sevenTwelfths) var(--twoThirds),
+      var(--rainbowBlue) var(--twoThirds) var(--fiveSixths),
+      var(--rainbowPurple) var(--fiveSixths) 100%
+    );
+  }
+
+  .flag.progressPride > .column {
+    background: linear-gradient(
+      to bottom,
+      var(--rainbowRed) 0% var(--oneSixth),
+      var(--rainbowOrange) var(--oneSixth) var(--oneThird),
+      var(--rainbowYellow) var(--oneThird) var(--oneHalf),
+      var(--rainbowGreen) var(--oneHalf) var(--twoThirds),
+      var(--rainbowBlue) var(--twoThirds) var(--fiveSixths),
+      var(--rainbowPurple) var(--fiveSixths) 100%
+    );
+  }
+</style>
+
+<div
+  class:list={["flag", flag, { animated: animated }, className, classList]}
+  {...props}
+>
+  <span class="column"></span>
+  <span class="column"></span>
+  <span class="column"></span>
+  <span class="column"></span>
+  <span class="column"></span>
+  <span class="column"></span>
+  <span class="column"></span>
+  <span class="column"></span>
+  <span class="column"></span>
+  <span class="column"></span>
+  <span class="column"></span>
+  <span class="column"></span>
+  <span class="column"></span>
+  <span class="column"></span>
+  <span class="column"></span>
+  <span class="column"></span>
+  <span class="column"></span>
+  <span class="column"></span>
+</div>

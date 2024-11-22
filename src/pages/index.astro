@@ -1,8 +1,25 @@
 ---
-import { Welcome } from 'astro:components';
-import Layout from '../layouts/Layout.astro';
+import Flag from "../components/Flag.astro";
+import Layout from "../layouts/Base.astro";
 ---
 
+<style>
+  h1 {
+    font-family: "VT323", monospace;
+    margin-bottom: 1rem;
+    text-align: center;
+    font-size: 5rem;
+    margin-top: 0;
+  }
+</style>
+
 <Layout>
-	<Welcome title="Welcome to Astro" />
+  <div>
+    <header>
+      <h1>welcome to swagLGBT</h1>
+    </header>
+    <main>
+      <Flag flag="progressPride" animated scale={20} />
+    </main>
+  </div>
 </Layout>
