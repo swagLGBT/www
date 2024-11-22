@@ -1,6 +1,6 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
-set -euox pipefail
+set -euo pipefail
 
 RAGE_VERSION="0.11.0"
 
