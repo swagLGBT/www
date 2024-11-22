@@ -74,7 +74,7 @@ function pixelArtIcons({
 
     const { stderr, pipedFrom, stdout, exitCode } = await execa({
       input: decryptionKey,
-    })`age --decrypt --identity - ${archivePath}`.pipe`${tar} -xzf -`;
+    })`age --decrypt --identity - ${archivePath}`.pipe`${tar} -xzvf -`;
 
     if (stderr.length > 0) {
       logger.warn(`stderr: ${stderr}`);
