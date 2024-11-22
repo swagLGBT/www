@@ -9,7 +9,17 @@ interface Props extends HTMLAttributes<"head"> {
 }
 
 const { title = "swagLGBT" } = Astro.props;
+
+const backgroundColor = "#000000";
+const foregroundColor = "#ffffff";
 ---
+
+<style define:vars={{ backgroundColor, foregroundColor }}>
+  body {
+    background-color: var(--backgroundColor);
+    color: var(--foregroundColor);
+  }
+</style>
 
 <html lang="en">
   <head>
