@@ -43,10 +43,10 @@ export default defineConfig({
   env: {
     schema: {
       // Variables set by the Cloudflare Pages build system
-      CF_PAGES: envField.boolean({
+      CF_PAGES: envField.number({
         access: "public",
         context: "client",
-        default: false,
+        default: 0,
         optional: true,
       }),
       CF_PAGES_COMMIT_SHA: envField.string({
@@ -75,6 +75,13 @@ export default defineConfig({
         access: "public",
         context: "client",
         default: pkg.volta.npm,
+      }),
+
+      // Variables I use to decrypt my icons
+      PIXEL_ART_ICONS_DECRYPTION_KEY: envField.string({
+        access: "secret",
+        context: "server",
+        optional: false,
       }),
     },
     validateSecrets: true,
