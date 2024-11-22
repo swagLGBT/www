@@ -1,11 +1,14 @@
 import process from "node:process";
 import path from "node:path";
 import fs from "node:fs";
+import os from "node:os";
 
 import { defineConfig } from "astro/config";
 import { type AstroIntegrationLogger, type AstroIntegration } from "astro";
 import icon from "astro-icon";
 import { execa } from "execa";
+
+const tar = os.platform() === "darwin" ? "gtar" : "tar";
 
 const iconDir = path.resolve("icons");
 const iconArchive = path.resolve("icons.tar.gz.enc");
@@ -71,7 +74,7 @@ function pixelArtIcons({
 
     const { stderr, pipedFrom, stdout, exitCode } = await execa({
       input: decryptionKey,
-    })`age --decrypt --identity - ${archivePath}`.pipe`tar -xf -`;
+    })`age --decrypt --identity - ${archivePath}`.pipe`${tar} -xzf -`;
 
     if (stderr.length > 0) {
       logger.warn(`stderr: ${stderr}`);
