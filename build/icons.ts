@@ -26,11 +26,7 @@ export function pixelArtIcons({
 }: PixelArtIconsIntegrationConfig): AstroIntegration {
   const codegenDir: { value?: URL } = {};
   const iconDir: { value?: URL } = {};
-  const extractedFolderName = path.basename(encryptedArchive).split(".")[0];
-
-  if (extractedFolderName === undefined) {
-    throw new Error("No dots in archive filename?");
-  }
+  const extractedFolderName = "icons";
 
   return {
     name: "pixel icons",
@@ -70,8 +66,10 @@ export function pixelArtIcons({
           return;
         }
 
-        if (codegenDir.value === undefined) {
-          throw new Error("Expected codegen dir to be created by setup hook.");
+        if (codegenDir.value === undefined || iconDir.value === undefined) {
+          throw new Error(
+            "Expected codegen directories to be created by setup hook."
+          );
         }
 
         const decryptedArchive = await decrypt({
@@ -86,7 +84,7 @@ export function pixelArtIcons({
           archive: decryptedArchive,
         });
 
-        if (iconDir.value === undefined || !fs.existsSync(iconDir.value)) {
+        if (!fs.existsSync(iconDir.value)) {
           throw new Error(
             `Expected a folder named ${extractedFolderName} to exist after extraction.`
           );
@@ -98,6 +96,8 @@ export function pixelArtIcons({
         });
 
         logger.debug(`Wrote icon names to ${url.fileURLToPath(dtsFileUrl)}`);
+
+        logger.info(`Extracted icons successfully`);
 
         return;
       },
