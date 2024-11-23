@@ -7,7 +7,7 @@
     "build": "astro check && astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "encrypt-icons": "gtar -czvf - ./icons | rage -r $PIXEL_ART_ICONS_ENCRYPTION_KEY > icons.tar.gz.enc"
+    "encrypt-icons": "gtar -C ./icons -czvf - . | rage -r $PIXEL_ART_ICONS_ENCRYPTION_KEY > icons.tar.gz.enc"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",

@@ -24,25 +24,20 @@ export function pixelArtIcons({
   encryptedArchive,
   decryptionKeyVar,
 }: PixelArtIconsIntegrationConfig): AstroIntegration {
-  const codegenDir: { value?: URL } = {};
-  const iconDir: { value?: URL } = {};
-  const extractedFolderName = "icons";
+  let iconDir: URL;
 
   return {
     name: "pixel icons",
     hooks: {
       "astro:config:setup": ({ updateConfig, createCodegenDir }) => {
-        codegenDir.value = createCodegenDir();
-        iconDir.value = url.pathToFileURL(
-          path.join(url.fileURLToPath(codegenDir.value), extractedFolderName)
-        );
+        iconDir = new URL("icons", createCodegenDir());
 
         updateConfig({
           // Tell the `icon` integration to look for icons in the dir we're extracting to.
           integrations: [
             icon({
               include: {},
-              iconDir: url.fileURLToPath(iconDir.value),
+              iconDir: url.fileURLToPath(iconDir),
             }),
           ],
 
@@ -66,33 +61,25 @@ export function pixelArtIcons({
           return;
         }
 
-        if (codegenDir.value === undefined || iconDir.value === undefined) {
-          throw new Error(
-            "Expected codegen directories to be created by setup hook."
-          );
-        }
-
         const decryptedArchive = await decrypt({
           encrypted: await fsp.readFile(archivePath),
           // We can assert this exists because we tell astro to validate it in the "config:setup" hook.
           key: process.env[decryptionKeyVar]!,
         });
 
+        if (!fs.existsSync(iconDir)) {
+          await fsp.mkdir(iconDir);
+        }
+
         await extract({
-          cwd: codegenDir.value,
+          cwd: iconDir,
           logger,
           archive: decryptedArchive,
         });
 
-        if (!fs.existsSync(iconDir.value)) {
-          throw new Error(
-            `Expected a folder named ${extractedFolderName} to exist after extraction.`
-          );
-        }
-
         const dtsFileUrl = await createDts({
           injectTypes,
-          iconDir: iconDir.value,
+          iconDir,
         });
 
         logger.debug(`Wrote icon names to ${url.fileURLToPath(dtsFileUrl)}`);
