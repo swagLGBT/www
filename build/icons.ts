@@ -14,12 +14,15 @@ import { envField } from "astro/config";
 import icon from "astro-icon";
 
 type PixelArtIconsIntegrationConfig = {
-  /** The path to the encrypted archive of icons */
+  /** The path to the age-encrypted gz-compressed tarball of icons */
   encryptedArchive: string;
   /** The environment variable containing the decryption key */
   decryptionKeyVar: string;
 };
 
+/**
+ * Decrypt and extract halfmage's pixel art icons for use with the `astro-icon` library.
+ */
 export function pixelArtIcons({
   encryptedArchive,
   decryptionKeyVar,
@@ -84,7 +87,7 @@ export function pixelArtIcons({
 
         logger.debug(`Wrote icon names to ${url.fileURLToPath(dtsFileUrl)}`);
 
-        logger.info(`Extracted icons successfully`);
+        logger.info(`Successfully extracted icons`);
 
         return;
       },
