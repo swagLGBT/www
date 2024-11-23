@@ -1,90 +1,56 @@
 import path from "node:path";
 import fs from "node:fs";
 import fsp from "node:fs/promises";
+import url from "node:url";
 
-import type { AstroIntegration, AstroIntegrationLogger } from "astro";
+import type {
+  AstroIntegration,
+  AstroIntegrationLogger,
+  InjectedType,
+} from "astro";
 import * as tar from "tar";
 import { default as initAge } from "age-encryption";
 import { envField } from "astro/config";
+import icon from "astro-icon";
 
 type PixelArtIconsIntegrationConfig = {
   /** The path to the encrypted archive of icons */
   encryptedArchive: string;
-  /**
-   * The directory in which to place the unarchived icons.
-   *
-   * Note: This is not _prescriptive_.
-   * The actual destination the icons are extracted to is determined by `tar`.
-   * This setting is _descriptive_, and is used to avoid duplicating work
-   * if the icons have already been extracted. (i.e. in development).
-   */
-  outDir: string;
   /** The environment variable containing the decryption key */
   decryptionKeyVar: string;
 };
 
 export function pixelArtIcons({
   encryptedArchive,
-  outDir,
   decryptionKeyVar,
 }: PixelArtIconsIntegrationConfig): AstroIntegration {
-  const decryptAndUnpack = async ({
-    logger,
-  }: {
-    logger: AstroIntegrationLogger;
-  }): Promise<void> => {
-    // We know this is set since we require astro to validate it.
-    const decryptionKey = process.env[decryptionKeyVar]!;
+  const codegenDir: { value?: URL } = {};
+  const iconDir: { value?: URL } = {};
+  const extractedFolderName = path.basename(encryptedArchive).split(".")[0];
 
-    logger.debug(
-      `Running Pixel Art Icons integration with configuration: ${JSON.stringify({ encryptedArchive, decryptionKey, outDir })}`
-    );
-
-    if (fs.existsSync(outDir)) {
-      logger.info(
-        `Skipping extraction of icons since ${outDir} already exists.`
-      );
-      return;
-    }
-
-    const archivePath = path.resolve(encryptedArchive);
-    if (!fs.existsSync(archivePath)) {
-      logger.error(`${archivePath} not found`);
-      return;
-    }
-
-    const archiveContents = await fsp.readFile(archivePath);
-
-    const age = await initAge();
-    const decryptor = new age.Decrypter();
-    decryptor.addIdentity(decryptionKey);
-
-    const decryptedArchive = decryptor.decrypt(archiveContents, "uint8array");
-
-    const extractor = tar.extract();
-    extractor.on("warn", (err) => logger.warn(`${err}`));
-    const doneWriting = new Promise<void>((resolve) =>
-      extractor.on("close", resolve)
-    );
-
-    await new Promise<void>((resolve, reject) =>
-      extractor.write(decryptedArchive, (err) =>
-        err instanceof Error ? reject(err) : resolve()
-      )
-    );
-
-    await new Promise<void>((resolve) => extractor.end(resolve));
-    await doneWriting;
-    logger.info("Extracted icons from archive.");
-
-    return;
-  };
+  if (extractedFolderName === undefined) {
+    throw new Error("No dots in archive filename?");
+  }
 
   return {
     name: "pixel icons",
     hooks: {
-      "astro:config:setup": ({ updateConfig }) => {
+      "astro:config:setup": ({ updateConfig, createCodegenDir }) => {
+        codegenDir.value = createCodegenDir();
+        iconDir.value = url.pathToFileURL(
+          path.join(url.fileURLToPath(codegenDir.value), extractedFolderName)
+        );
+
         updateConfig({
+          // Tell the `icon` integration to look for icons in the dir we're extracting to.
+          integrations: [
+            icon({
+              include: {},
+              iconDir: url.fileURLToPath(iconDir.value),
+            }),
+          ],
+
+          // Require `decryptionKeyVar` to be set in the environment
           env: {
             schema: {
               [decryptionKeyVar]: envField.string({
@@ -97,8 +63,103 @@ export function pixelArtIcons({
           },
         });
       },
-      "astro:build:start": decryptAndUnpack,
-      "astro:server:start": decryptAndUnpack,
+      "astro:config:done": async ({ logger, injectTypes }): Promise<void> => {
+        const archivePath = path.resolve(encryptedArchive);
+        if (!fs.existsSync(archivePath)) {
+          logger.error(`${archivePath} not found`);
+          return;
+        }
+
+        if (codegenDir.value === undefined) {
+          throw new Error("Expected codegen dir to be created by setup hook.");
+        }
+
+        const decryptedArchive = await decrypt({
+          encrypted: await fsp.readFile(archivePath),
+          // We can assert this exists because we tell astro to validate it in the "config:setup" hook.
+          key: process.env[decryptionKeyVar]!,
+        });
+
+        await extract({
+          cwd: codegenDir.value,
+          logger,
+          archive: decryptedArchive,
+        });
+
+        if (iconDir.value === undefined || !fs.existsSync(iconDir.value)) {
+          throw new Error(
+            `Expected a folder named ${extractedFolderName} to exist after extraction.`
+          );
+        }
+
+        const dtsFileUrl = await createDts({
+          injectTypes,
+          iconDir: iconDir.value,
+        });
+
+        logger.debug(`Wrote icon names to ${url.fileURLToPath(dtsFileUrl)}`);
+
+        return;
+      },
     },
   };
+}
+
+async function extract({
+  cwd,
+  logger,
+  archive,
+}: {
+  cwd: URL;
+  logger: AstroIntegrationLogger;
+  archive: Uint8Array;
+}) {
+  const extractor = tar.extract({ cwd: url.fileURLToPath(cwd) });
+
+  extractor.on("warn", (err) => logger.warn(`${err}`));
+  const doneWriting = new Promise<void>((resolve) =>
+    extractor.on("close", resolve)
+  );
+
+  await new Promise<void>((resolve, reject) =>
+    extractor.write(archive, (err) =>
+      err instanceof Error ? reject(err) : resolve()
+    )
+  );
+
+  await new Promise<void>((resolve) => extractor.end(resolve));
+  await doneWriting;
+}
+
+async function decrypt({
+  encrypted,
+  key,
+}: {
+  encrypted: Uint8Array;
+  key: string;
+}) {
+  const age = await initAge();
+  const decryptor = new age.Decrypter();
+  decryptor.addIdentity(key);
+
+  return decryptor.decrypt(encrypted, "uint8array");
+}
+
+async function createDts({
+  injectTypes,
+  iconDir,
+}: {
+  injectTypes: (injectedType: InjectedType) => URL;
+  iconDir: URL;
+}) {
+  const iconNames = (await fsp.readdir(iconDir, { withFileTypes: true })).map(
+    (entry) => path.parse(entry.name).name
+  );
+
+  const iconNameTypeDecl = `export type IconName = ${iconNames.map((name) => `"${name}"`).join(" | ")};`;
+
+  return injectTypes({
+    filename: "icon-names.d.ts",
+    content: `declare module "virtual:pixel-art-icons" { ${iconNameTypeDecl} }`,
+  });
 }
