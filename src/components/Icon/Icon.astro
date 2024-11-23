@@ -4,13 +4,47 @@ import type { ComponentProps } from "astro/types";
 
 import type { IconName } from "virtual:pixel-art-icons";
 
-interface Props
-  extends Omit<ComponentProps<typeof IconInner>, "name" | "width" | "height"> {
-  name: IconName;
-  size?: number;
-}
+type StripPrefix<
+  Prefix extends string,
+  T extends string,
+> = T extends `${Prefix}-${infer R}` ? R : never;
 
-const { size = 1, ...props } = Astro.props;
+type IconFamily<Prefix extends string> = StripPrefix<
+  Prefix,
+  Extract<IconName, `${Prefix}-${string}`>
+>;
+
+type ThinIconName = IconFamily<"thin">;
+type GlyphIconName = IconFamily<"glyph">;
+type SolidIconName = IconFamily<"solid">;
+type NormalIconName = Exclude<
+  IconName,
+  `thin-${string}` | `glyph-${string}` | `solid-${string}`
+>;
+
+type IconFamilyProps =
+  | { family: "thin"; icon: ThinIconName }
+  | { family: "glyph"; icon: GlyphIconName }
+  | { family: "solid"; icon: SolidIconName }
+  | { family?: "normal"; icon: NormalIconName };
+
+type Props = Omit<
+  ComponentProps<typeof IconInner>,
+  "name" | "width" | "height"
+> &
+  IconFamilyProps & {
+    size?: number;
+  };
+
+const { size = 1, family = "normal", icon, ...props } = Astro.props;
+const name =
+  family === "solid"
+    ? `solid-${icon}`
+    : family === "thin"
+      ? `thin-${icon}`
+      : family === "glyph"
+        ? `glyph-${icon}`
+        : icon;
 ---
 
-<IconInner size={`${size * 24}px`} {...props} />
+<IconInner size={`${size * 24}px`} name={name} {...props} />
