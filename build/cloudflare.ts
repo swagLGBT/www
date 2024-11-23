@@ -72,6 +72,8 @@ export function cfPagesEnvVars(): AstroIntegration {
         }
 
         updateConfig({ site: CF_PAGES_URL });
+
+        logger.info(`set site url to ${CF_PAGES_URL} (via CF_PAGES_URL)`);
       },
     },
   };
