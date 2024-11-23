@@ -5,26 +5,37 @@ import fsp from "node:fs/promises";
 import type { AstroIntegration, AstroIntegrationLogger } from "astro";
 import * as tar from "tar";
 import { default as initAge } from "age-encryption";
+import { envField } from "astro/config";
 
 type PixelArtIconsIntegrationConfig = {
   /** The path to the encrypted archive of icons */
   encryptedArchive: string;
-  /** The decryption key to use for decrypting the archive */
-  decryptionKey: string;
-  /** The directory in which to place the unarchived icons */
+  /**
+   * The directory in which to place the unarchived icons.
+   *
+   * Note: This is not _prescriptive_.
+   * The actual destination the icons are extracted to is determined by `tar`.
+   * This setting is _descriptive_, and is used to avoid duplicating work
+   * if the icons have already been extracted. (i.e. in development).
+   */
   outDir: string;
+  /** The environment variable containing the decryption key */
+  decryptionKeyVar: string;
 };
 
 export function pixelArtIcons({
   encryptedArchive,
-  decryptionKey,
   outDir,
+  decryptionKeyVar,
 }: PixelArtIconsIntegrationConfig): AstroIntegration {
   const decryptAndUnpack = async ({
     logger,
   }: {
     logger: AstroIntegrationLogger;
   }): Promise<void> => {
+    // We know this is set since we require astro to validate it.
+    const decryptionKey = process.env[decryptionKeyVar]!;
+
     logger.debug(
       `Running Pixel Art Icons integration with configuration: ${JSON.stringify({ encryptedArchive, decryptionKey, outDir })}`
     );
@@ -72,6 +83,20 @@ export function pixelArtIcons({
   return {
     name: "pixel icons",
     hooks: {
+      "astro:config:setup": ({ updateConfig }) => {
+        updateConfig({
+          env: {
+            schema: {
+              [decryptionKeyVar]: envField.string({
+                access: "secret",
+                context: "server",
+                optional: false,
+              }),
+            },
+            validateSecrets: true,
+          },
+        });
+      },
       "astro:build:start": decryptAndUnpack,
       "astro:server:start": decryptAndUnpack,
     },
