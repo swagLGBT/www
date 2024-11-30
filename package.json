@@ -1,0 +1,7 @@
+{
+  "name": "@swag.lgbt/root",
+  "private": "true",
+  "workspaces": [
+    "www"
+  ]
+}
