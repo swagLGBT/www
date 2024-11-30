@@ -16,14 +16,14 @@
     "@fontsource-variable/fira-code": "^5.1.0",
     "@fontsource/ibm-plex-mono": "^5.1.0",
     "@fontsource/vt323": "^5.1.0",
-    "astro": "^5.0.0-beta.10",
+    "astro": "^5.0.0-beta.12",
     "astro-icon": "^1.1.4",
     "typescript": "^5.7.2",
     "age-encryption": "^0.1.5",
     "tar": "^7.4.3"
   },
   "overrides": {
-    "astro": "^5.0.0-beta.10"
+    "astro": "^5.0.0-beta.12"
   },
   "volta": {
     "node": "23.3.0",
