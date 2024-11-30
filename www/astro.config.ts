@@ -4,7 +4,7 @@ import { defineConfig, envField } from "astro/config";
 import cloudflare from "@astrojs/cloudflare";
 import sitemap from "@astrojs/sitemap";
 
-import root from "../package.json";
+import pkg from "./package.json";
 import { pixelArtIcons } from "./build/icons";
 import { cfPagesEnvVars } from "./build/cloudflare";
 
@@ -25,12 +25,12 @@ export default defineConfig({
       NODE_VERSION: envField.string({
         access: "public",
         context: "client",
-        default: root.volta.node,
+        default: pkg.volta.node,
       }),
       NPM_VERSION: envField.string({
         access: "public",
         context: "client",
-        default: root.volta.npm,
+        default: pkg.volta.npm,
       }),
     },
   },

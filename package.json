@@ -3,9 +3,5 @@
   "private": "true",
   "workspaces": [
     "www"
-  ],
-  "volta": {
-    "node": "23.3.0",
-    "npm": "10.9.1"
-  }
+  ]
 }
