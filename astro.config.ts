@@ -28,10 +28,10 @@ export default defineConfig({
         context: "client",
         default: pkg.volta.node,
       }),
-      NPM_VERSION: envField.string({
+      PNPM_VERSION: envField.string({
         access: "public",
         context: "client",
-        default: pkg.volta.npm,
+        default: pkg.volta.pnpm,
       }),
     },
   },
