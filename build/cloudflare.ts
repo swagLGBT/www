@@ -9,8 +9,7 @@ export function cfPagesEnvVars(): AstroIntegration {
     hooks: {
       "astro:config:setup": ({ updateConfig, logger }) => {
         updateConfig({
-          // TODO: change this to "static" once @astrojs/cloudflare catches up to astro 5
-          output: "server",
+          output: "static",
           env: {
             schema: {
               // Variables set by the Cloudflare Pages build system
@@ -50,7 +49,7 @@ export function cfPagesEnvVars(): AstroIntegration {
             break;
           default:
             throw new Error(
-              `CF_PAGES was set to unexpected value: ${CF_PAGES}`
+              `CF_PAGES was set to unexpected value: ${CF_PAGES}`,
             );
         }
 
@@ -59,7 +58,7 @@ export function cfPagesEnvVars(): AstroIntegration {
           CF_PAGES_COMMIT_SHA.length === 0
         ) {
           throw new Error(
-            `CF_PAGES was set, but CF_PAGES_COMMIT_SHA is undefined`
+            `CF_PAGES was set, but CF_PAGES_COMMIT_SHA is undefined`,
           );
         }
 
